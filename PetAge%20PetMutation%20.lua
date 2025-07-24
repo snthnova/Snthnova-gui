@@ -1,4 +1,3 @@
-
 -- Franzken's Compact Mutation + Age Changer GUI with Welcome Glow
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
