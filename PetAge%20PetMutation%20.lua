@@ -1,4 +1,4 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/snthnova/Snthtools-gui/refs/heads/main/Code.lua"))()
+
 -- Franzken's Compact Mutation + Age Changer GUI with Welcome Glow
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
