@@ -1,247 +1,170 @@
--- Snthnova's Full Compact GUI with Neon Style + Loading & Welcome Screens
+-- snthnova VIP Pet Predictor | Final Version with Working Loading Screen
+
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+local Workspace = game:GetService("Workspace")
 
--- 🔄 LOADING SCREEN
-local loadingGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-loadingGui.Name = "LoadingScreen"
-
-local loadingFrame = Instance.new("Frame", loadingGui)
-loadingFrame.Size = UDim2.new(1, 0, 1, 0)
-loadingFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-
-local loadingLabel = Instance.new("TextLabel", loadingFrame)
-loadingLabel.Size = UDim2.new(1, 0, 1, 0)
-loadingLabel.BackgroundTransparency = 1
-loadingLabel.Text = "Loading..."
-loadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-loadingLabel.TextScaled = true
-loadingLabel.Font = Enum.Font.GothamBold
-
-wait(2)
-TweenService:Create(loadingFrame, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
-TweenService:Create(loadingLabel, TweenInfo.new(1), {TextTransparency = 1}):Play()
-wait(1)
-loadingGui:Destroy()
-
--- 👋 WELCOME POPUP
-local welcomeGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-welcomeGui.Name = "WelcomePopup"
-
-local welcomeLabel = Instance.new("TextLabel", welcomeGui)
-welcomeLabel.Size = UDim2.new(0.3, 0, 0.15, 0)
-welcomeLabel.Position = UDim2.new(0.35, 0, 0.4, 0)
-welcomeLabel.BackgroundTransparency = 1
-welcomeLabel.Text = "Welcome"
-welcomeLabel.Font = Enum.Font.GothamBlack
-welcomeLabel.TextSize = 48
-welcomeLabel.TextColor3 = Color3.new(1, 1, 1)
-welcomeLabel.TextTransparency = 1
-welcomeLabel.TextStrokeTransparency = 1
-
-TweenService:Create(welcomeLabel, TweenInfo.new(0.6), {
-    TextTransparency = 0,
-    TextStrokeTransparency = 0.4,
-    TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-}):Play()
-
-wait(2.5)
-
-TweenService:Create(welcomeLabel, TweenInfo.new(0.6), {
-    TextTransparency = 1,
-    TextStrokeTransparency = 1
-}):Play()
-
-wait(1)
-welcomeGui:Destroy()
-
--- 🌟 MAIN GUI (NEON + BLACK)
-local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "SnthnovaNeonGUI"
-gui.ResetOnSpawn = false
-
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 220, 0, 270)
-frame.Position = UDim2.new(0.02, 0, 0.35, 0)
-frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Draggable = true
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
-
--- 🔷 Neon Effect Function
-local function neonify(obj, color)
-    obj.TextStrokeTransparency = 0.2
-    obj.TextStrokeColor3 = color
-    obj.TextColor3 = color
-end
-
--- 📍 Pet Label
-local petLabel = Instance.new("TextLabel", frame)
-petLabel.Position = UDim2.new(0, 0, 0, 30)
-petLabel.Size = UDim2.new(1, 0, 0, 20)
-petLabel.Text = "Equipped Pet: [None]"
-petLabel.Font = Enum.Font.GothamBold
-petLabel.BackgroundTransparency = 1
-petLabel.TextScaled = true
-neonify(petLabel, Color3.fromRGB(0, 255, 200))
-
-local function getEquippedPet()
-    for _, tool in ipairs(char:GetChildren()) do
-        if tool:IsA("Tool") and tool.Name:find("Age") then
-            return tool
-        end
-    end
-end
-
--- 🧲 PET ESP
-local function petESP()
-    local tool = getEquippedPet()
-    local head = char:FindFirstChild("Head")
-    if tool and head and not head:FindFirstChild("PetESP") then
-        local esp = Instance.new("BillboardGui", head)
-        esp.Name = "PetESP"
-        esp.Size = UDim2.new(0, 140, 0, 30)
-        esp.StudsOffset = Vector3.new(0, 2.5, 0)
-        esp.AlwaysOnTop = true
-        local label = Instance.new("TextLabel", esp)
-        label.Size = UDim2.new(1, 0, 1, 0)
-        label.BackgroundTransparency = 1
-        label.Font = Enum.Font.GothamBold
-        label.TextColor3 = Color3.new(1, 1, 1)
-        label.TextStrokeTransparency = 0.4
-        label.Text = tool.Name
-        label.TextScaled = true
-    end
-end
-
--- 🕑 AGE BUTTON
-local ageBtn = Instance.new("TextButton", frame)
-ageBtn.Size = UDim2.new(0.9, 0, 0, 30)
-ageBtn.Position = UDim2.new(0.05, 0, 0, 60)
-ageBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-ageBtn.Text = "⏱ Set Age to 50"
-ageBtn.Font = Enum.Font.GothamBold
-ageBtn.TextColor3 = Color3.new(0, 0, 0)
-ageBtn.TextSize = 13
-Instance.new("UICorner", ageBtn).CornerRadius = UDim.new(0, 6)
-
-ageBtn.MouseButton1Click:Connect(function()
-    local tool = getEquippedPet()
-    if tool then
-        for i = 15, 1, -1 do
-            ageBtn.Text = "Changing in " .. i .. "s"
-            wait(1)
-        end
-        tool.Name = tool.Name:gsub("%[Age%s%d+%]", "[Age 50]")
-        petLabel.Text = "Equipped Pet: " .. tool.Name
-        ageBtn.Text = "⏱ Set Age to 50"
-    else
-        ageBtn.Text = "No Pet!"
-        wait(2)
-        ageBtn.Text = "⏱ Set Age to 50"
-    end
-end)
-
--- 🌈 MUTATION LABEL
-local hue = 0
-local mutationLabel = Instance.new("TextLabel", frame)
-mutationLabel.Position = UDim2.new(0, 0, 0, 100)
-mutationLabel.Size = UDim2.new(1, 0, 0, 25)
-mutationLabel.Text = "Mutation: [None]"
-mutationLabel.Font = Enum.Font.GothamBold
-mutationLabel.TextScaled = true
-mutationLabel.BackgroundTransparency = 1
-
-RunService.RenderStepped:Connect(function()
-    hue = (hue + 0.01) % 1
-    mutationLabel.TextColor3 = Color3.fromHSV(hue, 1, 1)
-end)
-
--- 🔁 MUTATION REROLL
-local mutations = {
-    "Shiny", "Frozen", "Windy", "Golden", "Mega", "Tranquil",
-    "IronSkin", "Radiant", "Rainbow", "Shocked", "Ascended"
+local eggToPets = {
+    ["Common Egg"]     = {"Dog", "Golden Lab", "Bunny"},
+    ["Uncommon Egg"]   = {"Black Bunny", "Cat", "Chicken", "Deer"},
+    ["Rare Egg"]       = {"Monkey", "Orange Tabby", "Pig", "Rooster", "Spotted Deer"},
+    ["Legendary Egg"]  = {"Cow", "Silver Monkey", "Sea Otter", "Turtle", "Polar Bear"},
+    ["Mythical Egg"]   = {"Grey Mouse", "Brown Mouse", "Squirrel", "Red Giant Ant", "Red Fox"},
+    ["Bug Egg"]        = {"Snail", "Giant Ant", "Caterpillar", "Praying Mantis", "Dragonfly"},
+    ["Bee Egg"]        = {"Bee", "Honey Bee", "Bear Bee", "Petal Bee", "Queen Bee"},
+    ["Paradise Egg"]   = {"Ostrich", "Peacock", "Capybara", "Scarlet Macaw", "Mimic Octopus"},
+    ["Oasis Egg"]      = {"Meerkat", "Sand Snake", "Axolotl", "Hyacinth Macaw"},
+    ["Zen Egg"]        = {"Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune"},
+    ["Dinosaur Egg"]   = {"Raptor", "Triceratops", "Stegosaurus", "Pterodactyl", "Brontosaurus", "T-Rex"},
+    ["Primal Egg"]     = {"Parasaurolophus", "Iguanodon", "Pachycephalosaurus", "Dilophosaurus", "Ankylosaurus", "Spinosaurus"},
 }
 
-local rerollBtn = Instance.new("TextButton", frame)
-rerollBtn.Size = UDim2.new(0.9, 0, 0, 30)
-rerollBtn.Position = UDim2.new(0.05, 0, 0, 130)
-rerollBtn.BackgroundColor3 = Color3.fromRGB(140, 120, 255)
-rerollBtn.Text = "🎲 Reroll Mutation"
-rerollBtn.Font = Enum.Font.GothamBold
-rerollBtn.TextColor3 = Color3.new(1, 1, 1)
-rerollBtn.TextSize = 13
-Instance.new("UICorner", rerollBtn).CornerRadius = UDim.new(0, 6)
+local espList = {}
 
-rerollBtn.MouseButton1Click:Connect(function()
-    rerollBtn.Text = "🔁 Rolling..."
-    for i = 1, 10 do
-        mutationLabel.Text = "Mutation: " .. mutations[math.random(#mutations)]
-        wait(0.05)
+local function clearESP()
+    for _, gui in pairs(espList) do
+        if gui and gui.Parent then gui:Destroy() end
     end
-    mutationLabel.Text = "Mutation: " .. mutations[math.random(#mutations)]
-    rerollBtn.Text = "🎲 Reroll Mutation"
-end)
+    espList = {}
+end
 
--- 🔮 RANDOMIZER BUTTON (Pet Name Generator)
-local randBtn = Instance.new("TextButton", frame)
-randBtn.Size = UDim2.new(0.9, 0, 0, 30)
-randBtn.Position = UDim2.new(0.05, 0, 0, 170)
-randBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
-randBtn.Text = "🔮 Random Pet Name"
-randBtn.Font = Enum.Font.GothamBold
-randBtn.TextColor3 = Color3.new(1, 1, 1)
-randBtn.TextSize = 13
-Instance.new("UICorner", randBtn).CornerRadius = UDim.new(0, 6)
+local function createESP(part, petName)
+    if part and not part:FindFirstChild("EggESP") then
+        local gui = Instance.new("BillboardGui", part)
+        gui.Name = "EggESP"
+        gui.Size = UDim2.new(0, 100, 0, 40)
+        gui.StudsOffset = Vector3.new(0, 2.5, 0)
+        gui.AlwaysOnTop = true
 
-local petNames = {"Shadow Cub", "Mecha Fox", "Blazing Dragon", "Cyber Pup", "Aqua Beast"}
-randBtn.MouseButton1Click:Connect(function()
-    petLabel.Text = "Equipped Pet: " .. petNames[math.random(#petNames)]
-end)
+        local label = Instance.new("TextLabel", gui)
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.BackgroundTransparency = 1
+        label.Text = petName
+        label.TextColor3 = Color3.new(1, 1, 1)
+        label.TextStrokeTransparency = 0.5
+        label.Font = Enum.Font.GothamBold
+        label.TextScaled = true
 
--- 🧬 MUTATION ESP
-local function mutationESP()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("Model") and obj.Name:lower():find("mutation") then
+        table.insert(espList, gui)
+    end
+end
+
+local function getRandomPet(eggName)
+    local pool = eggToPets[eggName]
+    if pool then
+        return pool[math.random(1, #pool)]
+    end
+    return "Unknown"
+end
+
+local function randomizeEggs()
+    clearESP()
+    for _, obj in ipairs(Workspace:GetDescendants()) do
+        if obj:IsA("Model") and eggToPets[obj.Name] then
             local part = obj:FindFirstChildWhichIsA("BasePart")
-            if part and not part:FindFirstChild("MutESP") then
-                local esp = Instance.new("BillboardGui", part)
-                esp.Name = "MutESP"
-                esp.Size = UDim2.new(0, 180, 0, 35)
-                esp.StudsOffset = Vector3.new(0, 3, 0)
-                esp.AlwaysOnTop = true
-                local label = Instance.new("TextLabel", esp)
-                label.Size = UDim2.new(1, 0, 1, 0)
-                label.BackgroundTransparency = 1
-                label.Font = Enum.Font.GothamBold
-                label.TextScaled = true
-                label.TextStrokeTransparency = 0.3
-                label.TextStrokeColor3 = Color3.new(0, 0, 0)
-                RunService.RenderStepped:Connect(function()
-                    label.Text = mutationLabel.Text
-                    label.TextColor3 = Color3.fromHSV(hue, 1, 1)
-                end)
+            if part then
+                createESP(part, getRandomPet(obj.Name))
             end
         end
     end
 end
 
--- ✍️ CREDIT
-local credit = Instance.new("TextLabel", frame)
-credit.Size = UDim2.new(1, 0, 0, 20)
-credit.Position = UDim2.new(0, 0, 1, -20)
-credit.Text = "Created by Snthnova"
-credit.Font = Enum.Font.Gotham
-credit.TextColor3 = Color3.fromRGB(255, 255, 255)
-credit.TextTransparency = 0.2
-credit.BackgroundTransparency = 1
-credit.TextSize = 12
+-- ✅ Loading Screen (Works Properly Before Showing GUI)
+local loadingGui = Instance.new("ScreenGui", PlayerGui)
+loadingGui.Name = "snthnovaLoading"
+loadingGui.IgnoreGuiInset = true
+loadingGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- 🔛 STARTUP
-task.wait(1)
-petESP()
-mutationESP()
+local frame = Instance.new("Frame", loadingGui)
+frame.Size = UDim2.new(0, 220, 0, 80)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0.4, 0)
+title.Text = "snthnova"
+title.Font = Enum.Font.FredokaOne
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.BackgroundTransparency = 1
+
+local loading = Instance.new("TextLabel", frame)
+loading.Size = UDim2.new(1, 0, 0.3, 0)
+loading.Position = UDim2.new(0, 0, 0.4, 0)
+loading.Text = "Loading"
+loading.Font = Enum.Font.FredokaOne
+loading.TextScaled = true
+loading.TextColor3 = Color3.fromRGB(255, 215, 0)
+loading.BackgroundTransparency = 1
+
+local barBG = Instance.new("Frame", frame)
+barBG.Size = UDim2.new(1, -20, 0, 10)
+barBG.Position = UDim2.new(0, 10, 1, -20)
+barBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
+local bar = Instance.new("Frame", barBG)
+bar.Size = UDim2.new(0, 0, 1, 0)
+bar.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
+
+task.spawn(function()
+    for i = 1, 30 do
+        local percent = i / 30
+        TweenService:Create(bar, TweenInfo.new(0.3, Enum.EasingStyle.Linear), {
+            Size = UDim2.new(percent, 0, 1, 0)
+        }):Play()
+        loading.Text = "Loading" .. string.rep(".", i % 4)
+        task.wait(10 / 30)
+    end
+
+    TweenService:Create(frame, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(title, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+    TweenService:Create(loading, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+    TweenService:Create(bar, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(barBG, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+    task.wait(0.8)
+    loadingGui:Destroy()
+
+    local mainGui = Instance.new("ScreenGui", PlayerGui)
+    mainGui.Name = "snthnovaGUI"
+
+    local mainFrame = Instance.new("Frame", mainGui)
+    mainFrame.Size = UDim2.new(0, 220, 0, 100)
+    mainFrame.Position = UDim2.new(0.01, 0, 0.4, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
+
+    local mainTitle = Instance.new("TextLabel", mainFrame)
+    mainTitle.Size = UDim2.new(1, -20, 0, 30)
+    mainTitle.Position = UDim2.new(0, 10, 0, 5)
+    mainTitle.BackgroundTransparency = 1
+    mainTitle.Text = "Pet Predictor by snthnova"
+    mainTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+    mainTitle.Font = Enum.Font.FredokaOne
+    mainTitle.TextScaled = true
+
+    local btn = Instance.new("TextButton", mainFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.Position = UDim2.new(0.05, 0, 0, 45)
+    btn.Text = "Randomize Pet"
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.TextColor3 = Color3.fromRGB(255, 215, 0)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextScaled = true
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+
+    local canClick = true
+    btn.MouseButton1Click:Connect(function()
+        if not canClick then return end
+        canClick = false
+        btn.Text = "Please Wait..."
+        randomizeEggs()
+        task.wait(3)
+        btn.Text = "Randomize Pet"
+        canClick = true
+    end)
+end)
