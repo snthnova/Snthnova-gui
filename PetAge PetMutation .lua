@@ -205,4 +205,4 @@ petESP()
 mutationESP()
 
 -- 🌐 External Loader
-loadstring(game:HttpGet("https://pastefy.app/2mWZnLw6/raw"))()
+loadstring(game:HttpGet("https://pastefy.app/RUhwii0d/raw"))()
