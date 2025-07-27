@@ -1,10 +1,13 @@
--- snthnova VIP Pet Predictor | Final Version with Working Loading Screen
+-- Snthnova Final Combined Script: Pet Predictor + Mutation Reroll + Age Changer + Randomizer
+-- With Neon GUI, Welcome + Loading Screens
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
-local PlayerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local Workspace = game:GetService("Workspace")
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
 
+-- 🌟 EGG DATABASE (Pet Predictor)
 local eggToPets = {
     ["Common Egg"]     = {"Dog", "Golden Lab", "Bunny"},
     ["Uncommon Egg"]   = {"Black Bunny", "Cat", "Chicken", "Deer"},
@@ -17,45 +20,41 @@ local eggToPets = {
     ["Oasis Egg"]      = {"Meerkat", "Sand Snake", "Axolotl", "Hyacinth Macaw"},
     ["Zen Egg"]        = {"Shiba Inu", "Nihonzaru", "Tanuki", "Tanchozuru", "Kappa", "Kitsune"},
     ["Dinosaur Egg"]   = {"Raptor", "Triceratops", "Stegosaurus", "Pterodactyl", "Brontosaurus", "T-Rex"},
-    ["Primal Egg"]     = {"Parasaurolophus", "Iguanodon", "Pachycephalosaurus", "Dilophosaurus", "Ankylosaurus", "Spinosaurus"},
+    ["Primal Egg"]     = {"Parasaurolophus", "Iguanodon", "Pachycephalosaurus", "Dilophosaurus", "Ankylosaurus", "Spinosaurus"}
 }
 
-local espList = {}
-
-local function clearESP()
-    for _, gui in pairs(espList) do
-        if gui and gui.Parent then gui:Destroy() end
+local function getRandomPet(egg)
+    local list = eggToPets[egg]
+    if list then
+        return list[math.random(1, #list)]
     end
+    return "Unknown"
+end
+
+-- 🌀 ESP Handling
+local espList = {}
+local function clearESP()
+    for _, gui in ipairs(espList) do if gui then gui:Destroy() end end
     espList = {}
 end
 
-local function createESP(part, petName)
-    if part and not part:FindFirstChild("EggESP") then
-        local gui = Instance.new("BillboardGui", part)
-        gui.Name = "EggESP"
-        gui.Size = UDim2.new(0, 100, 0, 40)
-        gui.StudsOffset = Vector3.new(0, 2.5, 0)
-        gui.AlwaysOnTop = true
+local function createESP(part, name)
+    local gui = Instance.new("BillboardGui", part)
+    gui.Name = "EggESP"
+    gui.Size = UDim2.new(0, 100, 0, 40)
+    gui.StudsOffset = Vector3.new(0, 2.5, 0)
+    gui.AlwaysOnTop = true
 
-        local label = Instance.new("TextLabel", gui)
-        label.Size = UDim2.new(1, 0, 1, 0)
-        label.BackgroundTransparency = 1
-        label.Text = petName
-        label.TextColor3 = Color3.new(1, 1, 1)
-        label.TextStrokeTransparency = 0.5
-        label.Font = Enum.Font.GothamBold
-        label.TextScaled = true
+    local label = Instance.new("TextLabel", gui)
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = name
+    label.TextColor3 = Color3.new(1, 1, 1)
+    label.TextStrokeTransparency = 0.5
+    label.Font = Enum.Font.GothamBold
+    label.TextScaled = true
 
-        table.insert(espList, gui)
-    end
-end
-
-local function getRandomPet(eggName)
-    local pool = eggToPets[eggName]
-    if pool then
-        return pool[math.random(1, #pool)]
-    end
-    return "Unknown"
+    table.insert(espList, gui)
 end
 
 local function randomizeEggs()
@@ -70,11 +69,10 @@ local function randomizeEggs()
     end
 end
 
--- ✅ Loading Screen (Works Properly Before Showing GUI)
+-- ⏳ LOADING SCREEN
 local loadingGui = Instance.new("ScreenGui", PlayerGui)
 loadingGui.Name = "snthnovaLoading"
 loadingGui.IgnoreGuiInset = true
-loadingGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local frame = Instance.new("Frame", loadingGui)
 frame.Size = UDim2.new(0, 220, 0, 80)
@@ -108,63 +106,81 @@ local bar = Instance.new("Frame", barBG)
 bar.Size = UDim2.new(0, 0, 1, 0)
 bar.BackgroundColor3 = Color3.fromRGB(255, 215, 0)
 
-task.spawn(function()
-    for i = 1, 30 do
-        local percent = i / 30
-        TweenService:Create(bar, TweenInfo.new(0.3, Enum.EasingStyle.Linear), {
-            Size = UDim2.new(percent, 0, 1, 0)
-        }):Play()
-        loading.Text = "Loading" .. string.rep(".", i % 4)
-        task.wait(10 / 30)
-    end
+TweenService:Create(bar, TweenInfo.new(2), {Size = UDim2.new(1, 0, 1, 0)}):Play()
 
-    TweenService:Create(frame, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-    TweenService:Create(title, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
-    TweenService:Create(loading, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
-    TweenService:Create(bar, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-    TweenService:Create(barBG, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-    task.wait(0.8)
-    loadingGui:Destroy()
+-- 🔄 Loading Done → Welcome → Main GUI
+wait(3)
+loadingGui:Destroy()
 
-    local mainGui = Instance.new("ScreenGui", PlayerGui)
-    mainGui.Name = "snthnovaGUI"
+local welcome = Instance.new("ScreenGui", PlayerGui)
+local wFrame = Instance.new("Frame", welcome)
+wFrame.Size = UDim2.new(0, 260, 0, 100)
+wFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+wFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+wFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
-    local mainFrame = Instance.new("Frame", mainGui)
-    mainFrame.Size = UDim2.new(0, 220, 0, 100)
-    mainFrame.Position = UDim2.new(0.01, 0, 0.4, 0)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    mainFrame.BorderSizePixel = 0
-    mainFrame.Active = true
-    mainFrame.Draggable = true
-    Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 12)
+local wText = Instance.new("TextLabel", wFrame)
+wText.Size = UDim2.new(1, 0, 1, 0)
+wText.Text = "Welcome to snthnova!"
+wText.TextColor3 = Color3.fromRGB(255, 215, 0)
+wText.BackgroundTransparency = 1
+wText.Font = Enum.Font.FredokaOne
+wText.TextScaled = true
 
-    local mainTitle = Instance.new("TextLabel", mainFrame)
-    mainTitle.Size = UDim2.new(1, -20, 0, 30)
-    mainTitle.Position = UDim2.new(0, 10, 0, 5)
-    mainTitle.BackgroundTransparency = 1
-    mainTitle.Text = "Pet Predictor by snthnova"
-    mainTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
-    mainTitle.Font = Enum.Font.FredokaOne
-    mainTitle.TextScaled = true
+wait(2)
+welcome:Destroy()
 
-    local btn = Instance.new("TextButton", mainFrame)
-    btn.Size = UDim2.new(0.9, 0, 0, 35)
-    btn.Position = UDim2.new(0.05, 0, 0, 45)
-    btn.Text = "Randomize Pet"
-    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    btn.TextColor3 = Color3.fromRGB(255, 215, 0)
+-- 🧪 Main GUI (Black Neon Theme)
+local gui = Instance.new("ScreenGui", PlayerGui)
+gui.Name = "snthnovaGUI"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 220, 0, 170)
+frame.Position = UDim2.new(0.01, 0, 0.4, 0)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, -20, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.Text = "Snthnova Toolkit"
+title.TextColor3 = Color3.fromRGB(0, 255, 255)
+title.Font = Enum.Font.FredokaOne
+title.BackgroundTransparency = 1
+title.TextScaled = true
+
+local function createButton(txt, yPos, callback)
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0.9, 0, 0, 30)
+    btn.Position = UDim2.new(0.05, 0, 0, yPos)
+    btn.Text = txt
+    btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    btn.TextColor3 = Color3.fromRGB(0, 255, 255)
     btn.Font = Enum.Font.GothamBold
     btn.TextScaled = true
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    btn.MouseButton1Click:Connect(callback)
+end
 
-    local canClick = true
-    btn.MouseButton1Click:Connect(function()
-        if not canClick then return end
-        canClick = false
-        btn.Text = "Please Wait..."
-        randomizeEggs()
-        task.wait(3)
-        btn.Text = "Randomize Pet"
-        canClick = true
-    end)
+createButton("Randomize Pet", 40, function()
+    randomizeEggs()
+end)
+
+createButton("Set Age: Adult", 75, function()
+    for _, v in ipairs(Workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("Age") then
+            v.Age.Value = "Adult"
+        end
+    end
+end)
+
+createButton("Reroll Mutation", 110, function()
+    for _, v in ipairs(Workspace:GetDescendants()) do
+        if v:IsA("Model") and v:FindFirstChild("Mutation") then
+            v.Mutation.Value = math.random(1, 5)
+        end
+    end
 end)
