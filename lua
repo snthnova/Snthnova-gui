@@ -973,7 +973,6 @@ task.spawn(function()
         "Strawberry Shortcake Bat Dragon",
         "Zombie Buffalo",
         "Fairy Bat Dragon"
-        "Frost Phoenix"
     }
     local vu279 = Instance.new("TextButton")
     vu279.Size = UDim2.new(0.6, 0, 0, 25)
