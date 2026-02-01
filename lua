@@ -714,7 +714,7 @@ task.spawn(function()
     local v229 = Instance.new("TextLabel")
     v229.Size = UDim2.new(1, 0, 0, 25)
     v229.BackgroundTransparency = 1
-    v229.Text = "sozuaa DC"
+    v229.Text = ""
     v229.Font = Enum.Font.FredokaOne
     v229.TextSize = 20
     v229.TextColor3 = Color3.fromRGB(240, 240, 255)
@@ -973,6 +973,7 @@ task.spawn(function()
         "Strawberry Shortcake Bat Dragon",
         "Zombie Buffalo",
         "Fairy Bat Dragon"
+        "Frost Phoenix"
     }
     local vu279 = Instance.new("TextButton")
     vu279.Size = UDim2.new(0.6, 0, 0, 25)
