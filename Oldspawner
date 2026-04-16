@@ -1,725 +1,738 @@
-task.spawn(
-    function()
-        local load = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
+-- ts file was generated at discord.gg/25ms
+
+task.spawn(function()
+    local _load = require(game.ReplicatedStorage:WaitForChild('Fsys')).load
+
+    set_thread_identity(2)
+
+    local _ClientData = _load('ClientData')
+    local _KindDB = _load('KindDB')
+    local _RouterClient = _load('RouterClient')
+    local _DownloadClient = _load('DownloadClient')
+    local _AnimationManager = _load('AnimationManager')
+    local _newPetRigs = _load('new:PetRigs')
+
+    set_thread_identity(8)
+
+    local u8 = {}
+    local u9 = {}
+    local u10 = nil
+    local u11 = nil
+    local u12 = nil
+
+    local function u17(p13, p14)
+        local v15 = _ClientData.get(p13)
+        local v16 = table.clone(v15)
+
+        _ClientData.predict(p13, p14(v16))
+    end
+    local function u18()
+        return game:GetService('HttpService'):GenerateGUID(false)
+    end
+    local function u21(p19)
+        if u8[p19] then
+            return u8[p19]
+        end
+
+        local v20 = _DownloadClient.promise_download_copy('Pets', p19):expect()
+
+        u8[p19] = v20
+
+        return v20
+    end
+    local function u28(p22, p23)
+        local u24 = u18()
+        local u25 = nil
 
         set_thread_identity(2)
-        local clientData = load("ClientData")
-        local items = load("KindDB")
-        local router = load("RouterClient")
-        local downloader = load("DownloadClient")
-        local animationManager = load("AnimationManager")
-        local petRigs = load("new:PetRigs")
+        u17('inventory', function(p26)
+            local v27 = table.clone(p26.pets)
+
+            u25 = {
+                unique = u24,
+                category = 'pets',
+                id = p22,
+                kind = _KindDB[p22].kind,
+                newness_order = 0,
+                properties = p23,
+            }
+            v27[u24] = u25
+            p26.pets = v27
+
+            return p26
+        end)
         set_thread_identity(8)
 
-        local petModels = {}
-        local pets = {}
-        local equippedPet = nil
-        local mountedPet = nil
-        local currentMountTrack = nil
+        u9[u24] = {
+            data = u25,
+            model = nil,
+        }
 
-        local function updateData(key, action)
-            local data = clientData.get(key)
-            local clonedData = table.clone(data)
-            clientData.predict(key, action(clonedData))
-        end
+        return u25
+    end
+    local function u37(p29, p30)
+        local _PetModel = p29:FindFirstChild('PetModel')
 
-        local function getUniqueId()
-            local HttpService = game:GetService("HttpService")
-            return HttpService:GenerateGUID(false)
-        end
+        if _PetModel then
+            local v32, v33, v34 = pairs(p30.neon_parts)
 
-        local function getPetModel(kind)
-            if petModels[kind] then
-                return petModels[kind]
+            while true do
+                local v35
+
+                v34, v35 = v32(v33, v34)
+
+                if v34 == nil then
+                    break
+                end
+
+                local v36 = _newPetRigs.get(_PetModel).get_geo_part(_PetModel, v34)
+
+                v36.Material = v35.Material
+                v36.Color = v35.Color
             end
-            local streamed = downloader.promise_download_copy("Pets", kind):expect()
-            petModels[kind] = streamed
-            return streamed
+        end
+    end
+    local function u40(p38)
+        u17('pet_char_wrappers', function(p39)
+            p38.unique = #p39 + 1
+            p38.index = #p39 + 1
+            p39[#p39 + 1] = p38
+
+            return p39
+        end)
+    end
+    local function u43(p41)
+        u17('pet_state_managers', function(p42)
+            p42[#p42 + 1] = p41
+
+            return p42
+        end)
+    end
+    local function u50(p44, p45)
+        local v46, v47, v48 = pairs(p44)
+
+        while true do
+            local v49
+
+            v48, v49 = v46(v47, v48)
+
+            if v48 == nil then
+                break
+            end
+            if p45(v49, v48) then
+                return v48
+            end
         end
 
-        local function createPet(id, properties)
-            local uniqueId = getUniqueId()
-            local pet = nil
+        return nil
+    end
+    local function u59(p51)
+        u17('pet_char_wrappers', function(p52)
+            local v54 = u50(p52, function(p53)
+                return p53.pet_unique == p51
+            end)
 
-            set_thread_identity(2)
-            updateData(
-                "inventory",
-                function(inventory)
-                    local newPets = table.clone(inventory.pets)
-                    local item = items[id]
-                    pet = {
-                        unique = uniqueId,
-                        category = "pets",
-                        id = id,
-                        kind = item.kind,
-                        newness_order = 0,
-                        properties = properties
+            if not v54 then
+                return p52
+            end
+
+            table.remove(p52, v54)
+
+            local v55, v56, v57 = pairs(p52)
+
+            while true do
+                local v58
+
+                v57, v58 = v55(v56, v57)
+
+                if v57 == nil then
+                    break
+                end
+
+                v58.unique = v57
+                v58.index = v57
+            end
+
+            return p52
+        end)
+    end
+    local function u66(p60)
+        local u61 = u9[p60]
+
+        if u61 then
+            if u61.model then
+                u17('pet_state_managers', function(p62)
+                    local v64 = u50(p62, function(p63)
+                        return p63.char == u61.model
+                    end)
+
+                    if not v64 then
+                        return p62
+                    end
+
+                    local v65 = table.clone(p62)
+
+                    v65[v64] = table.clone(v65[v64])
+                    v65[v64].states = {}
+
+                    return v65
+                end)
+            end
+        else
+            return
+        end
+    end
+    local function u75(p67, p68)
+        local u69 = u9[p67]
+
+        if u69 then
+            if u69.model then
+                u17('pet_state_managers', function(p70)
+                    local v72 = u50(p70, function(p71)
+                        return p71.char == u69.model
+                    end)
+
+                    if not v72 then
+                        return p70
+                    end
+
+                    local v73 = table.clone(p70)
+
+                    v73[v72] = table.clone(v73[v72])
+
+                    local v74 = {
+                        {id = p68},
                     }
-                    newPets[uniqueId] = pet
-                    inventory.pets = newPets
-                    return inventory
-                end
-            )
 
-            set_thread_identity(8)
-            pets[uniqueId] = {data = pet, model = nil}
-            return pet
+                    v73[v72].states = v74
+
+                    return v73
+                end)
+            end
+        else
+            return
         end
+    end
+    local function u81(p76)
+        local _Character = game.Players.LocalPlayer.Character
 
-        local function neonify(model, entry)
-            local petModel = model:FindFirstChild("PetModel")
-            if not petModel then
-                return
-            end
-            for neonPart, configuration in pairs(entry.neon_parts) do
-                local trueNeonPart = petRigs.get(petModel).get_geo_part(petModel, neonPart)
-                trueNeonPart.Material = configuration.Material
-                trueNeonPart.Color = configuration.Color
-            end
+        if not _Character then
+            return false
         end
-
-        local function addPetWrapper(wrapper)
-            updateData(
-                "pet_char_wrappers",
-                function(petWrappers)
-                    wrapper.unique = #petWrappers + 1
-                    wrapper.index = #petWrappers + 1
-                    petWrappers[#petWrappers + 1] = wrapper
-                    return petWrappers
-                end
-            )
-        end
-
-        local function addPetState(state)
-            updateData(
-                "pet_state_managers",
-                function(petStates)
-                    petStates[#petStates + 1] = state
-                    return petStates
-                end
-            )
-        end
-
-        local function findIndex(array, finder)
-            for index, value in pairs(array) do
-                if finder(value, index) then
-                    return index
-                end
-            end
-            return nil
-        end
-
-        local function removePetWrapper(uniqueId)
-            updateData(
-                "pet_char_wrappers",
-                function(petWrappers)
-                    local index =
-                        findIndex(
-                        petWrappers,
-                        function(wrapper)
-                            return wrapper.pet_unique == uniqueId
-                        end
-                    )
-                    if not index then
-                        return petWrappers
-                    end
-                    table.remove(petWrappers, index)
-                    for wrapperIndex, wrapper in pairs(petWrappers) do
-                        wrapper.unique = wrapperIndex
-                        wrapper.index = wrapperIndex
-                    end
-                    return petWrappers
-                end
-            )
-        end
-
-        local function clearPetState(uniqueId)
-            local pet = pets[uniqueId]
-            if not pet or not pet.model then
-                return
-            end
-            updateData(
-                "pet_state_managers",
-                function(states)
-                    local index =
-                        findIndex(
-                        states,
-                        function(state)
-                            return state.char == pet.model
-                        end
-                    )
-                    if not index then
-                        return states
-                    end
-                    local clonedStates = table.clone(states)
-                    clonedStates[index] = table.clone(clonedStates[index])
-                    clonedStates[index].states = {}
-                    return clonedStates
-                end
-            )
-        end
-
-        local function setPetState(uniqueId, id)
-            local pet = pets[uniqueId]
-            if not pet or not pet.model then
-                return
-            end
-            updateData(
-                "pet_state_managers",
-                function(states)
-                    local index =
-                        findIndex(
-                        states,
-                        function(state)
-                            return state.char == pet.model
-                        end
-                    )
-                    if not index then
-                        return states
-                    end
-                    local clonedStates = table.clone(states)
-                    clonedStates[index] = table.clone(clonedStates[index])
-                    clonedStates[index].states = {{id = id}}
-                    return clonedStates
-                end
-            )
-        end
-
-        local function attachPlayerToPet(pet)
-            local character = game.Players.LocalPlayer.Character
-            if not character or not character.PrimaryPart then
-                return false
-            end
-            local ridePosition = pet:FindFirstChild("RidePosition", true)
-            if not ridePosition then
-                return false
-            end
-
-            local sourceAttachment = Instance.new("Attachment")
-            sourceAttachment.Parent = ridePosition
-            sourceAttachment.Position = Vector3.new(0, 1.237, 0)
-            sourceAttachment.Name = "SourceAttachment"
-
-            local stateConnection = Instance.new("RigidConstraint")
-            stateConnection.Name = "StateConnection"
-            stateConnection.Attachment0 = sourceAttachment
-            stateConnection.Attachment1 = character.PrimaryPart.RootAttachment
-            stateConnection.Parent = character
-            return true
-        end
-
-        local function clearPlayerState()
-            updateData(
-                "state_manager",
-                function(state)
-                    local clonedState = table.clone(state)
-                    clonedState.states = {}
-                    clonedState.is_sitting = false
-                    return clonedState
-                end
-            )
-        end
-
-        local function setPlayerState(id)
-            updateData(
-                "state_manager",
-                function(state)
-                    local clonedState = table.clone(state)
-                    clonedState.states = {{id = id}}
-                    clonedState.is_sitting = true
-                    return clonedState
-                end
-            )
-        end
-
-        local function removePetState(uniqueId)
-            local pet = pets[uniqueId]
-            if not pet or not pet.model then
-                return
-            end
-            updateData(
-                "pet_state_managers",
-                function(petStates)
-                    local index =
-                        findIndex(
-                        petStates,
-                        function(state)
-                            return state.char == pet.model
-                        end
-                    )
-                    if not index then
-                        return petStates
-                    end
-                    table.remove(petStates, index)
-                    return petStates
-                end
-            )
-        end
-
-        local function unmount(uniqueId)
-            local pet = pets[uniqueId]
-            if not pet or not pet.model then
-                return
-            end
-            if currentMountTrack then
-                currentMountTrack:Stop()
-                currentMountTrack:Destroy()
-            end
-            local sourceAttachment = pet.model:FindFirstChild("SourceAttachment", true)
-            if sourceAttachment then
-                sourceAttachment:Destroy()
-            end
-            if game.Players.LocalPlayer.Character then
-                for _, d in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-                    if d:IsA("BasePart") and d:GetAttribute("HaveMass") then
-                        d.Massless = false
-                    end
-                end
-            end
-            clearPetState(uniqueId)
-            clearPlayerState()
-            pet.model:ScaleTo(1)
-            mountedPet = nil
-        end
-
-        local function mount(uniqueId, playerState, petState)
-            local pet = pets[uniqueId]
-            if not pet or not pet.model then
-                return
-            end
-            local player = game.Players.LocalPlayer
-            if not player.Character or not player.Character.PrimaryPart then
-                return
-            end
-            mountedPet = uniqueId
-            setPetState(uniqueId, petState)
-            setPlayerState(playerState)
-            pet.model:ScaleTo(2)
-            attachPlayerToPet(pet.model)
-            currentMountTrack =
-                player.Character.Humanoid.Animator:LoadAnimation(animationManager.get_track("PlayerRidingPet"))
-            player.Character.Humanoid.Sit = true
-            for _, d in pairs(player.Character:GetDescendants()) do
-                if d:IsA("BasePart") and d.Massless == false then
-                    d.Massless = true
-                    d:SetAttribute("HaveMass", true)
-                end
-            end
-            currentMountTrack:Play()
-        end
-
-        local function fly(uniqueId)
-            mount(uniqueId, "PlayerFlyingPet", "PetBeingFlown")
-        end
-        local function ride(uniqueId)
-            mount(uniqueId, "PlayerRidingPet", "PetBeingRidden")
-        end
-
-        local function unequip(item)
-            local pet = pets[item.unique]
-            if not pet or not pet.model then
-                return
-            end
-            unmount(item.unique)
-            removePetWrapper(item.unique)
-            removePetState(item.unique)
-            pet.model:Destroy()
-            pet.model = nil
-            equippedPet = nil
-        end
-
-        local function equip(item)
-            if equippedPet then
-                unequip(equippedPet)
-            end
-            local petModel = getPetModel(item.kind):Clone()
-            petModel.Parent = workspace
-            pets[item.unique].model = petModel
-            if item.properties.neon or item.properties.mega_neon then
-                neonify(petModel, items[item.kind])
-            end
-            equippedPet = item
-            addPetWrapper(
-                {
-                    char = petModel,
-                    mega_neon = item.properties.mega_neon,
-                    neon = item.properties.neon,
-                    player = game.Players.LocalPlayer,
-                    entity_controller = game.Players.LocalPlayer,
-                    controller = game.Players.LocalPlayer,
-                    rp_name = item.properties.rp_name or "",
-                    pet_trick_level = item.properties.pet_trick_level,
-                    pet_unique = item.unique,
-                    pet_id = item.id,
-                    location = {
-                        full_destination_id = "housing",
-                        destination_id = "housing",
-                        house_owner = game.Players.LocalPlayer
-                    },
-                    pet_progression = {
-                        friendship_level = item.properties.friendship_level,
-                        age = item.properties.age,
-                        percentage = 0
-                    },
-                    are_colors_sealed = false,
-                    is_pet = true
-                }
-            )
-            addPetState(
-                {
-                    char = petModel,
-                    player = game.Players.LocalPlayer,
-                    store_key = "pet_state_managers",
-                    is_sitting = false,
-                    chars_connected_to_me = {},
-                    states = {}
-                }
-            )
-        end
-
-        local oldGet = router.get
-        local function createRemoteFunctionMock(callback)
-            return {
-                InvokeServer = function(_, ...)
-                    return callback(...)
-                end
-            }
-        end
-        local function createRemoteEventMock(callback)
-            return {
-                FireServer = function(_, ...)
-                    return callback(...)
-                end
-            }
-        end
-
-        local equipRemote =
-            createRemoteFunctionMock(
-            function(uniqueId, metadata)
-                local pet = pets[uniqueId]
-                if not pet then
-                    return
-                end
-                equip(pet.data)
-                return true, {action = "equip", is_server = true}
-            end
-        )
-        local unequipRemote =
-            createRemoteFunctionMock(
-            function(uniqueId)
-                local pet = pets[uniqueId]
-                if not pet then
-                    return
-                end
-                unequip(pet.data)
-                return true, {action = "unequip", is_server = true}
-            end
-        )
-        local rideRemote =
-            createRemoteFunctionMock(
-            function(item)
-                ride(item.pet_unique)
-            end
-        )
-        local flyRemote =
-            createRemoteFunctionMock(
-            function(item)
-                fly(item.pet_unique)
-            end
-        )
-        local unmountRemoteFunction =
-            createRemoteFunctionMock(
-            function()
-                unmount(mountedPet)
-            end
-        )
-        local unmountRemoteEvent =
-            createRemoteEventMock(
-            function()
-                unmount(mountedPet)
-            end
-        )
-
-        router.get = function(name)
-            if name == "ToolAPI/Equip" then
-                return equipRemote
-            end
-            if name == "ToolAPI/Unequip" then
-                return unequipRemote
-            end
-            if name == "AdoptAPI/RidePet" then
-                return rideRemote
-            end
-            if name == "AdoptAPI/FlyPet" then
-                return flyRemote
-            end
-            if name == "AdoptAPI/ExitSeatStatesYield" then
-                return unmountRemoteFunction
-            end
-            if name == "AdoptAPI/ExitSeatStates" then
-                return unmountRemoteEvent
-            end
-            return oldGet(name)
-        end
-
-        for _, charWrapper in pairs(clientData.get("pet_char_wrappers")) do
-            oldGet("ToolAPI/Unequip"):InvokeServer(charWrapper.pet_unique)
-        end
-
-        local Loads = require(game.ReplicatedStorage.Fsys).load
-        local InventoryDB = Loads("InventoryDB")
-
-        function GetPetByName(name)
-            for i, v in pairs(InventoryDB.pets) do
-                if v.name:lower() == name:lower() then
-                    return v.id
-                end
-            end
+        if not _Character.PrimaryPart then
             return false
         end
 
-        local WindUI =
-            loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+        local _RidePosition = p76:FindFirstChild('RidePosition', true)
 
-        WindUI:Popup(
-            {
-                Title = "$mile Hub",
-                Icon = "cuboid",
-                IconThemed = true,
-                Content = "Hey everyone, Here's the latest Adopt Me visual script – enjoy! 🎉\nMake sure to join our Discord server for more updates, new features, and community support.",
-                Buttons = {
-                    {
-                        Title = "Cancel",
-                        Callback = function()
-                        end,
-                        Variant = "Secondary"
-                    },
-                    {
-                        Title = "Continue",
-                        Icon = "arrow-right",
-                        Callback = function()
-                            Confirmed = true
-                        end,
-                        Variant = "Primary"
-                    }
-                }
-            }
-        )
-
-        repeat
-            wait()
-        until Confirmed
-
-        local Window =
-            WindUI:CreateWindow(
-            {
-                Title = "$mile Hub",
-                Icon = "laptop",
-                Author = "discord.gg/VJH9YUcFDr",
-                Folder = "ChunkHubmm2",
-                Size = UDim2.fromOffset(420, 350),
-                Transparent = false,
-                Theme = "Dark",
-                User = {
-                    Enabled = true,
-                    Callback = function()
-                    end,
-                    Anonymous = false
-                },
-                SideBarWidth = 150,
-                ScrollBarEnabled = true
-            }
-        )
-
-        Window:EditOpenButton(
-            {
-                Title = "$mile Hub",
-                Icon = "rbxassetid://4483345998",
-                CornerRadius = UDim.new(0, 16),
-                StrokeThickness = 2,
-                Color = ColorSequence.new(Color3.fromHex("5787d2"), Color3.fromHex("ffffff")),
-                OnlyMobile = false,
-                Enabled = true,
-                Draggable = true
-            }
-        )
-
-        Window:SetToggleKey(Enum.KeyCode.K)
-
-        local PetsTab =
-            Window:Tab(
-            {
-                Title = "Pets",
-                Icon = "heart",
-                Desc = "Spawn pets"
-            }
-        )
-
-        local DiscordTab =
-            Window:Tab(
-            {
-                Title = "Discord",
-                Icon = "users",
-                Desc = "Copy our Discord Invite"
-            }
-        )
-
-        local petName = nil
-        local petType = "FR"
-
-        DiscordTab:Paragraph(
-            {
-                Title = "Join our Discord!",
-                Desc = "Join our Discord to Get Best Scripts!",
-                Image = "users",
-                Color = "Blue"
-            }
-        )
-
-DiscordTab:Button(
-    {
-        Title = "Copy Invite",
-        Icon = "users",
-        Callback = function()
-            task.spawn(
-                function()
-                    setclipboard("https://discord.gg/VJH9YUcFDr")
-                    WindUI:Notify(
-                        {
-                            Title = "Discord Invite Copied!",
-                            Content = "The invite link has been copied to your clipboard.",
-                            Icon = "users",
-                            Duration = 4,  -- Shows for 4 seconds
-                            Color = "Green"  -- Optional: makes it look positive
-                        }
-                    )
-                end
-            )
+        if not _RidePosition then
+            return false
         end
-    }
-)
 
-        PetsTab:Paragraph(
-            {
-                Title = "Pet Spawner",
-                Desc = "Enter the pet name and choose pet type before spawning",
-                Image = "heart",
-                Color = "Blue"
-            }
-        )
+        local _Attachment = Instance.new('Attachment')
 
-        PetsTab:Input(
-            {
-                Title = "Pet Name",
-                Value = "",
-                InputIcon = "search",
-                Placeholder = "Enter pet name",
-                Callback = function(input)
-                    task.spawn(
-                        function()
-                            petName = input
-                            warn("Pet name set to:", petName)
-                        end
-                    )
-                end
-            }
-        )
+        _Attachment.Parent = _RidePosition
+        _Attachment.Position = Vector3.new(0, 1.237, 0)
+        _Attachment.Name = 'SourceAttachment'
 
-        PetsTab:Dropdown(
-            {
-                Title = "Type",
-                Values = {"FR", "NFR", "MFR"},
-                Multi = false,
-                Default = "FR",
-                Callback = function(value)
-                    task.spawn(
-                        function()
-                            petType = value
-                            warn("Pet type set to:", petType)
-                        end
-                    )
-                end
-            }
-        )
+        local _RigidConstraint = Instance.new('RigidConstraint')
 
-        PetsTab:Button(
-            {
-                Title = "Spawn Pet",
-                Icon = "sparkles",
-                Callback = function()
-                    task.spawn(
-                        function()
-                            if not petName or petName == "" then
-                                warn("Please enter a pet name!")
-                                return
-                            end
-                            local petId = GetPetByName(petName)
-                            if not petId then
-                                warn("Pet not found!")
-                                WindUI:Notify(
-                                    {
-                                        Title = "Error",
-                                        Content = "Pet Not Found. Join our Discord for Help! discord.gg/VJH9YUcFDr",
-                                        Icon = "shield-alert",
-                                        Duration = 2
-                                    }
-                                )
-                                return
-                            end
-                            if petType == "FR" then
-                                createPet(
-                                    petId,
-                                    {
-                                        pet_trick_level = 0,
-                                        rideable = true,
-                                        flyable = true,
-                                        friendship_level = 0,
-                                        age = 1,
-                                        ailments_completed = 0,
-                                        rp_name = ""
-                                    }
-                                )
-                            elseif petType == "NFR" then
-                                createPet(
-                                    petId,
-                                    {
-                                        pet_trick_level = 0,
-                                        neon = true,
-                                        rideable = true,
-                                        flyable = true,
-                                        friendship_level = 0,
-                                        age = 1,
-                                        ailments_completed = 0,
-                                        rp_name = ""
-                                    }
-                                )
-                            elseif petType == "MFR" then
-                                createPet(
-                                    petId,
-                                    {
-                                        pet_trick_level = 0,
-                                        mega_neon = true,
-                                        rideable = true,
-                                        flyable = true,
-                                        friendship_level = 0,
-                                        age = 1,
-                                        ailments_completed = 0,
-                                        rp_name = ""
-                                    }
-                                )
-                            end
-                        end
-                    )
-                    WindUI:Notify(
-                        {
-                            Title = "Spawning Item",
-                            Content = "Spawned " .. petName .. " " .. petType,
-                            Icon = "loader",
-                            Duration = 2
-                        }
-                    )
-                end
-            }
-        )
+        _RigidConstraint.Name = 'StateConnection'
+        _RigidConstraint.Attachment0 = _Attachment
+        _RigidConstraint.Attachment1 = _Character.PrimaryPart.RootAttachment
+        _RigidConstraint.Parent = _Character
+
+        return true
     end
-)
+    local function u84()
+        u17('state_manager', function(p82)
+            local v83 = table.clone(p82)
+
+            v83.states = {}
+            v83.is_sitting = false
+
+            return v83
+        end)
+    end
+    local function u88(p85)
+        u17('state_manager', function(p86)
+            local v87 = table.clone(p86)
+
+            v87.states = {
+                {id = p85},
+            }
+            v87.is_sitting = true
+
+            return v87
+        end)
+    end
+    local function u94(p89)
+        local u90 = u9[p89]
+
+        if u90 then
+            if u90.model then
+                u17('pet_state_managers', function(p91)
+                    local v93 = u50(p91, function(p92)
+                        return p92.char == u90.model
+                    end)
+
+                    if not v93 then
+                        return p91
+                    end
+
+                    table.remove(p91, v93)
+
+                    return p91
+                end)
+            end
+        else
+            return
+        end
+    end
+    local function u102(p95)
+        local v96 = u9[p95]
+
+        if v96 then
+            if v96.model then
+                if u12 then
+                    u12:Stop()
+                    u12:Destroy()
+                end
+
+                local _SourceAttachment = v96.model:FindFirstChild('SourceAttachment', true)
+
+                if _SourceAttachment then
+                    _SourceAttachment:Destroy()
+                end
+                if game.Players.LocalPlayer.Character then
+                    local v98, v99, v100 = pairs(game.Players.LocalPlayer.Character:GetDescendants())
+
+                    while true do
+                        local v101
+
+                        v100, v101 = v98(v99, v100)
+
+                        if v100 == nil then
+                            break
+                        end
+                        if v101:IsA('BasePart') and v101:GetAttribute('HaveMass') then
+                            v101.Massless = false
+                        end
+                    end
+                end
+
+                u66(p95)
+                u84()
+                v96.model:ScaleTo(1)
+
+                u11 = nil
+            end
+        else
+            return
+        end
+    end
+    local function u112(p103, p104, p105)
+        local v106 = u9[p103]
+
+        if v106 then
+            if v106.model then
+                local _LocalPlayer = game.Players.LocalPlayer
+
+                if _LocalPlayer.Character then
+                    if _LocalPlayer.Character.PrimaryPart then
+                        u11 = p103
+
+                        u75(p103, p105)
+                        u88(p104)
+                        v106.model:ScaleTo(2)
+                        u81(v106.model)
+
+                        u12 = _LocalPlayer.Character.Humanoid.Animator:LoadAnimation(_AnimationManager.get_track('PlayerRidingPet'))
+                        _LocalPlayer.Character.Humanoid.Sit = true
+
+                        local v108, v109, v110 = pairs(_LocalPlayer.Character:GetDescendants())
+
+                        while true do
+                            local v111
+
+                            v110, v111 = v108(v109, v110)
+
+                            if v110 == nil then
+                                break
+                            end
+                            if v111:IsA('BasePart') and v111.Massless == false then
+                                v111.Massless = true
+
+                                v111:SetAttribute('HaveMass', true)
+                            end
+                        end
+
+                        u12:Play()
+                    end
+                else
+                    return
+                end
+            else
+                return
+            end
+        else
+            return
+        end
+    end
+    local function u114(p113)
+        u112(p113, 'PlayerFlyingPet', 'PetBeingFlown')
+    end
+    local function u116(p115)
+        u112(p115, 'PlayerRidingPet', 'PetBeingRidden')
+    end
+    local function u119(p117)
+        local v118 = u9[p117.unique]
+
+        if v118 then
+            if v118.model then
+                u102(p117.unique)
+                u59(p117.unique)
+                u94(p117.unique)
+                v118.model:Destroy()
+
+                v118.model = nil
+                u10 = nil
+            end
+        else
+            return
+        end
+    end
+    local function u122(p120)
+        if u10 then
+            u119(u10)
+        end
+
+        local v121 = u21(p120.kind):Clone()
+
+        v121.Parent = workspace
+        u9[p120.unique].model = v121
+
+        if p120.properties.neon or p120.properties.mega_neon then
+            u37(v121, _KindDB[p120.kind])
+        end
+
+        u10 = p120
+
+        u40({
+            char = v121,
+            mega_neon = p120.properties.mega_neon,
+            neon = p120.properties.neon,
+            player = game.Players.LocalPlayer,
+            entity_controller = game.Players.LocalPlayer,
+            controller = game.Players.LocalPlayer,
+            rp_name = p120.properties.rp_name or '',
+            pet_trick_level = p120.properties.pet_trick_level,
+            pet_unique = p120.unique,
+            pet_id = p120.id,
+            location = {
+                full_destination_id = 'housing',
+                destination_id = 'housing',
+                house_owner = game.Players.LocalPlayer,
+            },
+            pet_progression = {
+                friendship_level = p120.properties.friendship_level,
+                age = p120.properties.age,
+                percentage = 0,
+            },
+            are_colors_sealed = false,
+            is_pet = true,
+        })
+        u43({
+            char = v121,
+            player = game.Players.LocalPlayer,
+            store_key = 'pet_state_managers',
+            is_sitting = false,
+            chars_connected_to_me = {},
+            states = {},
+        })
+    end
+
+    local _get = _RouterClient.get
+
+    local function v125(p124)
+        return {
+            InvokeServer = function(_, ...)
+                return p124(...)
+            end,
+        }
+    end
+
+    local u128 = v125(function(p126, _)
+        local v127 = u9[p126]
+
+        if v127 then
+            u122(v127.data)
+
+            return true, {
+                action = 'equip',
+                is_server = true,
+            }
+        end
+    end)
+    local u131 = v125(function(p129)
+        local v130 = u9[p129]
+
+        if v130 then
+            u119(v130.data)
+
+            return true, {
+                action = 'unequip',
+                is_server = true,
+            }
+        end
+    end)
+    local u133 = v125(function(p132)
+        u116(p132.pet_unique)
+    end)
+    local u135 = v125(function(p134)
+        u114(p134.pet_unique)
+    end)
+    local u136 = v125(function()
+        u102(u11)
+    end)
+    local u138 = (function(p137)
+        return {
+            FireServer = function(_, ...)
+                return p137(...)
+            end,
+        }
+    end)(function()
+        u102(u11)
+    end)
+
+    function _RouterClient.get(p139)
+        if p139 == 'ToolAPI/Equip' then
+            return u128
+        elseif p139 == 'ToolAPI/Unequip' then
+            return u131
+        elseif p139 == 'AdoptAPI/RidePet' then
+            return u133
+        elseif p139 == 'AdoptAPI/FlyPet' then
+            return u135
+        elseif p139 == 'AdoptAPI/ExitSeatStatesYield' then
+            return u136
+        elseif p139 == 'AdoptAPI/ExitSeatStates' then
+            return u138
+        else
+            return _get(p139)
+        end
+    end
+
+    local v140, v141, v142 = pairs(_ClientData.get('pet_char_wrappers'))
+    local v143 = _get
+
+    while true do
+        local v144
+
+        v142, v144 = v140(v141, v142)
+
+        if v142 == nil then
+            break
+        end
+
+        v143('ToolAPI/Unequip'):InvokeServer(v144.pet_unique)
+    end
+
+    local _InventoryDB = require(game.ReplicatedStorage.Fsys).load('InventoryDB')
+
+    function GetPetByName(p146)
+        local v147, v148, v149 = pairs(_InventoryDB.pets)
+
+        while true do
+            local v150
+
+            v149, v150 = v147(v148, v149)
+
+            if v149 == nil then
+                break
+            end
+            if v150.name:lower() == p146:lower() then
+                return v150.id
+            end
+        end
+
+        return false
+    end
+
+    local _LocalPlayer2 = game:GetService('Players').LocalPlayer
+
+    game:GetService('UserInputService')
+
+    local _ScreenGui = Instance.new('ScreenGui')
+
+    _ScreenGui.Parent = _LocalPlayer2:WaitForChild('PlayerGui')
+
+    local _Frame = Instance.new('Frame')
+
+    _Frame.Size = UDim2.new(0, 350, 0, 250)
+    _Frame.Position = UDim2.new(0.5, -175, 0.5, -125)
+    _Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    _Frame.BackgroundTransparency = 0.1
+    _Frame.BorderSizePixel = 0
+    _Frame.Active = true
+    _Frame.Draggable = true
+    _Frame.Parent = _ScreenGui
+
+    local _UICorner = Instance.new('UICorner')
+
+    _UICorner.CornerRadius = UDim.new(0, 10)
+    _UICorner.Parent = _Frame
+
+    local _UIStroke = Instance.new('UIStroke')
+
+    _UIStroke.Thickness = 3
+    _UIStroke.Parent = _Frame
+
+    local function v157()
+        while true do
+            for v156 = 0, 1, 0.01 do
+                _UIStroke.Color = Color3.fromHSV(v156, 1, 1)
+
+                task.wait(0.05)
+            end
+        end
+    end
+
+    task.spawn(v157)
+
+    local _Frame2 = Instance.new('Frame')
+
+    _Frame2.Size = UDim2.new(1, 0, 0, 30)
+    _Frame2.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    _Frame2.BorderSizePixel = 0
+    _Frame2.Parent = _Frame
+
+    local _TextLabel = Instance.new('TextLabel')
+
+    _TextLabel.Text = 'Pet Spawner'
+    _TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    _TextLabel.BackgroundTransparency = 1
+    _TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _TextLabel.Font = Enum.Font.GothamBold
+    _TextLabel.TextSize = 16
+    _TextLabel.Parent = _Frame2
+
+    local _TextBox = Instance.new('TextBox')
+
+    _TextBox.Size = UDim2.new(0.8, 0, 0, 40)
+    _TextBox.Position = UDim2.new(0.1, 0, 0.25, 0)
+    _TextBox.PlaceholderText = 'Enter Pet Name'
+    _TextBox.Text = ''
+    _TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    _TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _TextBox.Font = Enum.Font.Gotham
+    _TextBox.TextSize = 14
+    _TextBox.Parent = _Frame
+
+    local _UICorner2 = Instance.new('UICorner')
+
+    _UICorner2.CornerRadius = UDim.new(0, 8)
+    _UICorner2.Parent = _TextBox
+
+    local u162 = 'FR'
+    local _TextLabel2 = Instance.new('TextLabel')
+
+    _TextLabel2.Size = UDim2.new(1, 0, 0, 30)
+    _TextLabel2.Position = UDim2.new(0, 0, 0.85, 0)
+    _TextLabel2.BackgroundTransparency = 1
+    _TextLabel2.Text = ''
+    _TextLabel2.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _TextLabel2.Font = Enum.Font.Gotham
+    _TextLabel2.TextSize = 14
+    _TextLabel2.Parent = _Frame
+
+    local function v169(p164, p165, p166)
+        local _TextButton = Instance.new('TextButton')
+
+        _TextButton.Size = UDim2.new(0.25, 0, 0, 30)
+        _TextButton.Position = UDim2.new(p165, 0, 0.45, 0)
+        _TextButton.Text = p164
+        _TextButton.BackgroundColor3 = p166
+        _TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        _TextButton.Font = Enum.Font.GothamBold
+        _TextButton.TextSize = 14
+        _TextButton.Parent = _Frame
+
+        local _UICorner3 = Instance.new('UICorner')
+
+        _UICorner3.CornerRadius = UDim.new(0, 8)
+        _UICorner3.Parent = _TextButton
+
+        _TextButton.MouseButton1Click:Connect(function()
+            u162 = p164
+            _TextLabel2.Text = 'Selected: ' .. p164
+            _TextLabel2.TextColor3 = Color3.fromRGB(255, 255, 0)
+        end)
+
+        return _TextButton
+    end
+
+    v169('MFR', 0.1, Color3.fromRGB(255, 100, 100))
+    v169('NFR', 0.4, Color3.fromRGB(100, 255, 100))
+    v169('FR', 0.7, Color3.fromRGB(100, 100, 255))
+
+    local _TextButton2 = Instance.new('TextButton')
+
+    _TextButton2.Size = UDim2.new(0.8, 0, 0, 40)
+    _TextButton2.Position = UDim2.new(0.1, 0, 0.65, 0)
+    _TextButton2.Text = 'Spawn Pet'
+    _TextButton2.BackgroundColor3 = Color3.fromRGB(60, 120, 200)
+    _TextButton2.TextColor3 = Color3.fromRGB(255, 255, 255)
+    _TextButton2.Font = Enum.Font.GothamBold
+    _TextButton2.TextSize = 14
+    _TextButton2.Parent = _Frame
+
+    local _UICorner4 = Instance.new('UICorner')
+
+    _UICorner4.CornerRadius = UDim.new(0, 8)
+    _UICorner4.Parent = _TextButton2
+
+    _TextButton2.MouseButton1Click:Connect(function()
+        local v172 = GetPetByName(_TextBox.Text)
+
+        if v172 then
+            if u162 ~= 'FR' then
+                if u162 ~= 'MFR' then
+                    if u162 == 'NFR' then
+                        u28(v172, {
+                            pet_trick_level = 0,
+                            neon = true,
+                            rideable = true,
+                            flyable = true,
+                            friendship_level = 0,
+                            age = 1,
+                            ailments_completed = 0,
+                            rp_name = '',
+                        })
+                    end
+                else
+                    u28(v172, {
+                        pet_trick_level = 0,
+                        mega_neon = true,
+                        rideable = true,
+                        flyable = true,
+                        friendship_level = 0,
+                        age = 1,
+                        ailments_completed = 0,
+                        rp_name = '',
+                    })
+                end
+            else
+                u28(v172, {
+                    pet_trick_level = 0,
+                    rideable = true,
+                    flyable = true,
+                    friendship_level = 0,
+                    age = 1,
+                    ailments_completed = 0,
+                    rp_name = '',
+                })
+            end
+        end
+    end)
+end)
