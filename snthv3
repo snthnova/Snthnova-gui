@@ -3508,16 +3508,16 @@ do
 			if not v9 then
 				return 0
 			end
-			local full = v9:FindFirstChild("Full")
-			if full and full.Visible then
-				return 999
-			end
 			local currencyFrame = v9:FindFirstChild("CurrencyFrame")
 			currencyFrame = currencyFrame and currencyFrame:FindFirstChild("Icon")
 			currencyFrame = currencyFrame and currencyFrame:FindFirstChild("Coins")
 			currencyFrame = currencyFrame and currencyFrame.Text
 			if currencyFrame and (string.lower(currencyFrame):find("full") or string.lower(currencyFrame):find("max")) then
-				return 999
+				return 50
+			end
+			local full = v9:FindFirstChild("Full")
+			if full and full.Visible then
+				return 50
 			end
 			return tonumber(currencyFrame) or 0
 		end)
