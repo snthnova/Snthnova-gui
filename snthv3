@@ -3754,7 +3754,7 @@ do
 					if fn35() > 0 then
 						local v10 = fn36()
 
-						if (localPlayer:GetAttribute("Elite") and 50 or 40) <= v10 then
+						if 50 <= v10 then
 							fn41()
 							tbl.finishFling()
 
