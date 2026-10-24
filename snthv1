@@ -586,8 +586,8 @@ end
 
 
 v2:Tag({
-	Title = "discord.gg/snthscripts",
-	Icon = "message-square-more",
+	Title = "youtube.com/@Snthscript",
+	Icon = "youtube",
 	Color = Color3.fromHex("#ffffff"),
 	Radius = 6,
 })
@@ -595,7 +595,7 @@ v2:Tag({
 v2:Tag({ Title = "Mobile & PC", Icon = "smartphone", Color = Color3.fromHex("#ffffff"), Radius = 6 })
 
 task.spawn(function()
-	local tbl = { ["discord.gg/snthscripts"] = true, ["Mobile & PC"] = true, ["@snthScripts"] = true }
+	local tbl = { ["youtube.com/@Snthscript"] = true, ["Mobile & PC"] = true, ["@snthScripts"] = true }
 	local colorSequence = ColorSequence.new
 	local tbl2 = {}
 	local v3 = ColorSequenceKeypoint.new(0, Color3.fromRGB(26, 26, 32))
@@ -1200,79 +1200,10 @@ tbl.reclip = function(arg)
 	end
 end
 
-tbl.DISCORD_INVITE = "snthscripts"
-tbl.DISCORD_FETCH = "XEBpqUNrMy"
-tbl.discordInfo = nil
-tbl.discordTried = false
+tbl.YOUTUBE_CHANNEL = "Snthscript"
 
 tbl.discordFetch = function()
-	if tbl.discordTried then
-		return tbl.discordInfo
-	end
-	tbl.discordTried = true
-	local str = "https://discord.com/api/v10/invites/" .. tbl.DISCORD_FETCH .. "?with_counts=true&with_expiration=true"
-	local body = nil
-	local request_ = v and v.Creator and v.Creator.Request or syn and syn.request or http_request or request
-	local request_2
-
-	if request_ then
-		request_2 = request_
-	else
-		request_2 = http and http.request
-	end
-
-	if request_2 then
-		local ok, result = pcall(function()
-			return request_2({ Url = str, Method = "GET", Headers = { ["User-Agent"] = "snth/2", Accept = "application/json" } })
-		end)
-
-		ok = ok and result
-
-		if ok then
-			ok = tonumber(result.StatusCode or 200) == 200
-		end
-
-		if ok then
-			body = result.Body
-		end
-	end
-
-	if not body then
-		local ok, result = pcall(function()
-			return game:HttpGet(str)
-		end)
-
-		if ok then
-			body = result
-		end
-	end
-
-	if not body then
-		return nil
-	end
-
-	local ok, result = pcall(function()
-		return game:GetService("HttpService"):JSONDecode(body)
-	end)
-
-	if not ok or type(result) ~= "table" or not result.guild then
-		return nil
-	end
-	local icon = result.guild.id and result.guild.icon
-	local str2 = nil
-
-	if icon then
-		str2 = "https://cdn.discordapp.com/icons/" .. result.guild.id .. "/" .. result.guild.icon .. ".png?size=1024"
-	end
-
-	tbl.discordInfo = {
-		name = result.guild.name or "snth Scripts",
-		members = result.approximate_member_count,
-		online = result.approximate_presence_count,
-		icon = str2,
-	}
-
-	return tbl.discordInfo
+	return nil
 end
 
 tbl.CLIPBOARD_FNS = {
@@ -1336,44 +1267,30 @@ tbl.copyText = function(arg)
 end
 
 tbl.copyInvite = function()
-	local str = "https://discord.gg/" .. tbl.DISCORD_INVITE
+	local str = "https://youtube.com/@" .. tbl.YOUTUBE_CHANNEL
 	return tbl.copyText(str), str
 end
 
 tbl.discordCard = function(arg)
-	local v3 = tbl.discordFetch()
-
-	local tbl2 = {
-		Title = "Join Server",
-		Callback = function()
-			local v4, v5 = tbl.copyInvite()
-
-			v:Notify({
-				Title = v4 and "Copied!" or "Discord",
-				Content = v4 and v5 .. " is on your clipboard." or v5,
-				Duration = 5,
-				Icon = v4 and "check" or "info",
-			})
-		end,
-	}
-
 	local paragraph = arg.Paragraph
-	local tbl3 = { Title = v3 and v3.name or "snth Scripts" }
-	local str
-
-	if v3 then
-		str = "Member Count : " .. tostring(v3.members or "?")
-	else
-		str = v3
-	end
-
-	tbl3.Desc = (str or "discord.gg/" .. tbl.DISCORD_INVITE) .. [[
-
-Join our discord to report bugs, give suggestions or ask a question! If you can't, just ask in our YouTube description.]]
-
-	tbl3.Image = v3 and v3.icon or "message-square-more"
+	local tbl3 = { Title = "Snthscript" }
+	tbl3.Desc = "youtube.com/@Snthscript\n\nSubscribe for updates, suggestions or bug reports — check the video description!"
+	tbl3.Image = "youtube"
 	tbl3.ImageSize = 48
-	tbl3.Buttons = { tbl2 }
+	tbl3.Buttons = {
+		{
+			Title = "Copy Link",
+			Callback = function()
+				local v4, v5 = tbl.copyInvite()
+				v:Notify({
+					Title = v4 and "Copied!" or "YouTube",
+					Content = v4 and v5 .. " is on your clipboard." or v5,
+					Duration = 5,
+					Icon = v4 and "check" or "info",
+				})
+			end,
+		}
+	}
 	paragraph(arg, tbl3)
 end
 
@@ -1607,7 +1524,7 @@ tbl.card = function(arg)
 		textLabel4.TextXAlignment = Enum.TextXAlignment.Left
 		textLabel4.TextColor3 = color6
 		textLabel4.TextTransparency = 1
-		textLabel4.Text = "discord.gg/" .. tbl.DISCORD_INVITE
+		textLabel4.Text = "youtube.com/@Snthscript"
 		textLabel4.Parent = frame3
 		local textButton2 = Instance.new("TextButton")
 		textButton2.AnchorPoint = Vector2.new(1, 0.5)
@@ -1679,7 +1596,7 @@ tbl.card = function(arg)
 				end
 
 				if textLabel4.Parent then
-					textLabel4.Text = "discord.gg/" .. tbl.DISCORD_INVITE
+					textLabel4.Text = "youtube.com/@Snthscript"
 				end
 			end)
 		end)
@@ -3591,16 +3508,16 @@ do
 			if not v9 then
 				return 0
 			end
-			local full = v9:FindFirstChild("Full")
-			if full and full.Visible then
-				return 999
-			end
 			local currencyFrame = v9:FindFirstChild("CurrencyFrame")
 			currencyFrame = currencyFrame and currencyFrame:FindFirstChild("Icon")
 			currencyFrame = currencyFrame and currencyFrame:FindFirstChild("Coins")
 			currencyFrame = currencyFrame and currencyFrame.Text
 			if currencyFrame and (string.lower(currencyFrame):find("full") or string.lower(currencyFrame):find("max")) then
-				return 999
+				return 50
+			end
+			local full = v9:FindFirstChild("Full")
+			if full and full.Visible then
+				return 50
 			end
 			return tonumber(currencyFrame) or 0
 		end)
@@ -3837,7 +3754,7 @@ do
 					if fn35() > 0 then
 						local v10 = fn36()
 
-						if (localPlayer:GetAttribute("Elite") and 50 or 40) <= v10 then
+						if 50 <= v10 then
 							fn41()
 							tbl.finishFling()
 
@@ -14024,8 +13941,8 @@ tbl.notifyNow({
 task.delay(1.5, function()
 	pcall(function()
 		tbl.card({
-			title = "We have a Discord!",
-			subtitle = "Report bugs, suggest features, ask questions",
+			title = "Subscribe to Snthscript!",
+			subtitle = "youtube.com/@Snthscript",
 			body = "Script not working correctly? Use the red Restore Settings button to reset all settings to their defaults.",
 			actions = {
 				{
