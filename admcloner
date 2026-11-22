@@ -1,16 +1,3 @@
--- discord.gg/syncrypt
-
-if not getgenv().SCRIPT_KEY then
-	if not SCRIPT_KEY then
-		r = "No script key provided, please pass a SCRIPT_KEY!"
-		loadstring(game:HttpGet("https://jnkie.com/sdk/love.lua"))()
-
-		return
-	end
-
-	getgenv().SCRIPT_KEY = SCRIPT_KEY
-end
-
 if getgenv().EXECUTING == "true" then
 	warn("There is already an execution in progress. Please wait before executing another script.")
 
