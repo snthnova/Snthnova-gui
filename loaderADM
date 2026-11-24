@@ -148,6 +148,6 @@ task.delay(3.5, function()
 end)
 
 -- Run main script after loading
-task.delay(0.6, function()
+task.delay(2.6, function()
 	loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/051b9ab9e55bc6acf1ead9319bd606ec.lua"))()
 end)
